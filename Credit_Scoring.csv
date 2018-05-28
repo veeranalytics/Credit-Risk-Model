@@ -1,0 +1,26 @@
+Variable,Categories,Score
+Term,36 months,150
+Term,60 months,100
+int_rate,"[0,8.59]",150
+int_rate,"[8.88,11.14]",140
+int_rate,"[11.36,13.35]",130
+int_rate,"[13.48,15.2]",115
+int_rate,"[15.21,21.64]",100
+cibil_score,"[600,674]",100
+cibil_score,"[679,694]",110
+cibil_score,"[699,714]",120
+cibil_score,"[719,739]",140
+cibil_score,"[744,900]",150
+inq_last_6mths,"[0,0]",150
+inq_last_6mths,"[1,1]",130
+inq_last_6mths,"[2,]",100
+annual_inc,"[0,34819]",100
+annual_inc,"[35000,47544]",110
+annual_inc,"[48000,62400]",130
+annual_inc,"[62472,84996]",140
+annual_inc,"[85000,]",150
+loan_amnt,"[0,4700]",150
+loan_amnt,"[4750,7100]",140
+loan_amnt,"[7200,9975]",130
+loan_amnt,"[10000,15600]",120
+loan_amnt,"[16000,]",100
