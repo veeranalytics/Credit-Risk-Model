@@ -4,7 +4,6 @@ library(shinydashboard)
 library(shinyjs)
 library(ggplot2)
 library(ggthemes)
-library(plotly)
 library(curl)
 library(RCurl)
 library(DT)
@@ -15,6 +14,19 @@ library(rpart.plot)
 # Get Data
 loan_df <- read.csv("https://raw.githubusercontent.com/veeranalytics/Credit-Risk-Model/master/loan_data.csv")
 # back_df <- loan_df
+
+# Credit Scorecard Scoring Table
+score_df <- read.csv("https://raw.githubusercontent.com/veeranalytics/Credit-Risk-Model/master/Credit_Scoring.csv")
+print(score_df)
+
+# Get a list of existing customers
+df <- read.csv("https://raw.githubusercontent.com/veeranalytics/Credit-Risk-Model/master/Customers.csv")
+
+# Logistic Regression 
+log_model <- readRDS(url("https://github.com/veeranalytics/Credit-Risk-Model/blob/master/LogModel.rds?raw=true"))
+
+# Decision Tree
+tree_model_mod <- readRDS(url("https://github.com/veeranalytics/Credit-Risk-Model/blob/master/LogModel.rds"))
 
 # Take a glimpse of data
 str(loan_df)
@@ -135,11 +147,6 @@ summary(log_model)
 
 # saveRDS(log_model, "C:/Users/veer/Desktop/Projects/Credit_Risk_Modeling/Final/LogModel.rds")
 
-
-# Credit Scorecard Scoring Table
-
-score_df <- read.csv("https://raw.githubusercontent.com/veeranalytics/Credit-Risk-Model/master/Credit_Scoring.csv")
-print(score_df)
 
 # Applying Decision tree as getting very bad prediction accuracy for logistric regression
 
@@ -327,10 +334,40 @@ creditScore <- function(df) {
 creditScore(df)
 df$cibil_score
 
+prob_defaut_log_df <- predict(log_model, newdata = df, type = "response")
 
+library(plotly)
+library(ggplot2)
+
+gg.gauge <- function(pos,breaks=c(0,30,70,100)) {
   
-  
-  
+  get.poly <- function(a,b,r1=0.5,r2=1.0) {
+    th.start <- pi*(1-a/100)
+    th.end   <- pi*(1-b/100)
+    th       <- seq(th.start,th.end,length=100)
+    x        <- c(r1*cos(th),rev(r2*cos(th)))
+    y        <- c(r1*sin(th),rev(r2*sin(th)))
+    return(data.frame(x,y))
+  }
+  ggplot()+ 
+    geom_polygon(data=get.poly(breaks[1],breaks[2]),aes(x,y),fill="forestgreen")+
+    geom_polygon(data=get.poly(breaks[2],breaks[3]),aes(x,y),fill="gold")+
+    geom_polygon(data=get.poly(breaks[3],breaks[4]),aes(x,y),fill="red")+
+    geom_polygon(data=get.poly(pos-1,pos+1,0.2),aes(x,y))+
+    geom_text(data=as.data.frame(breaks), size=5, fontface="bold", vjust=0,
+              aes(x=1.1*cos(pi*(1-breaks/100)),y=1.1*sin(pi*(1-breaks/100)),label=paste0(breaks,"%")))+
+    annotate("text",x=0,y=0,label=pos,vjust=0,size=8,fontface="bold")+
+    coord_fixed()+
+    theme_bw()+
+    theme(axis.text=element_blank(),
+          axis.title=element_blank(),
+          axis.ticks=element_blank(),
+          panel.grid=element_blank(),
+          panel.border=element_blank()) 
+}
+gg.gauge(as.integer(prob_defaut_log_df*100),breaks=c(0,30,70,100))
+
+
   
   
   
